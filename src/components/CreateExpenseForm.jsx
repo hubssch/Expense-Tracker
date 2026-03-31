@@ -33,7 +33,7 @@ export default function CreateExpenseForm({ onExpenseAdded }) {
                     description,
                     category,
                     person,
-                    price: parseInt(price)
+                    price: parseFloat(price)
                 }
             ])
             .select();

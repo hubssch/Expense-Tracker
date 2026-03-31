@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import CreateExpenseForm from "./components/CreateExpenseForm";
 import ExpenseList from "./components/ExpenseList";
+import ExpenseSummary from "./components/ExpenseSummary";
 
 const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
 
@@ -22,6 +23,7 @@ function App() {
   return (
     <div>
       <CreateExpenseForm onExpenseAdded={getExpenses} />
+      <ExpenseSummary expenses={expenses} />
       <ExpenseList expenses={expenses} />
     </div>
   );
