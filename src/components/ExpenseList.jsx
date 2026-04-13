@@ -37,7 +37,7 @@ export default function ExpenseList({ expenses }) {
                         backgroundColor: '#16171d',
                         borderBottom: '2px solid #e5e7eb'
                     }}>
-                        <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Nazwa</th>
+                        <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Wydatek</th>
                         <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Opis</th>
                         <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Kategoria</th>
                         <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Osoba</th>

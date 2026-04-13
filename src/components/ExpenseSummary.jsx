@@ -150,7 +150,7 @@ export default function ExpenseSummary({ expenses }) {
                     style={{
                         marginTop: '10px',
                         padding: '8px 16px',
-                        backgroundColor: '#f0f0f0',
+                        backgroundColor: '#bababa',
                         border: '1px solid #ccc',
                         borderRadius: '4px',
                         cursor: 'pointer'

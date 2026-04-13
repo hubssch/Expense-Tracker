@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
@@ -11,8 +11,43 @@ export default function CreateExpenseForm({ onExpenseAdded }) {
         person: '',
         price: ''
     });
+    const [categories, setCategories] = useState([]);
+    const [people, setPeople] = useState([]);
+    const [names, setNames] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    useEffect(() => {
+        async function loadExistingValues() {
+            const { data, error } = await supabase.from('expenses').select('name, category, person');
+            if (error) {
+                console.error('Błąd pobierania istniejących wartości:', error);
+                return;
+            }
+
+            const uniqueNames = [];
+            const uniqueCategories = [];
+            const uniquePeople = [];
+
+            data.forEach((item) => {
+                if (item.name && !uniqueNames.includes(item.name)) {
+                    uniqueNames.push(item.name);
+                }
+                if (item.category && !uniqueCategories.includes(item.category)) {
+                    uniqueCategories.push(item.category);
+                }
+                if (item.person && !uniquePeople.includes(item.person)) {
+                    uniquePeople.push(item.person);
+                }
+            });
+
+            setNames(uniqueNames);
+            setCategories(uniqueCategories);
+            setPeople(uniquePeople);
+        }
+
+        loadExistingValues();
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -82,61 +117,74 @@ export default function CreateExpenseForm({ onExpenseAdded }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} style={{ textAlign: "left", margin: "30px 20px 0 20px" }}>
+        <form onSubmit={handleSubmit} style={{ textAlign: "center", margin: "20px" }}>
             <div>
-                <label>Nazwa:</label>
-                <input
+                <input style={{ fontSize: "16px", margin: "4px", padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
                     type="text"
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    placeholder="np. Obiad"
+                    placeholder="Wydatek:"
+                    list="name-options"
                     required
                 />
+                <datalist id="name-options">
+                    {names.map((item) => (
+                        <option key={item} value={item} />
+                    ))}
+                </datalist>
             </div>
 
             <div>
-                <label>Opis:</label>
-                <input
+                <input style={{ fontSize: "16px", margin: "4px", padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
                     type="text"
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
-                    placeholder="Szczegóły wydatku"
+                    placeholder="Opis:"
                 />
             </div>
 
             <div>
-                <label>Kategoria:</label>
-                <input
+                <input style={{ fontSize: "16px", margin: "4px", padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
                     type="text"
                     name="category"
                     value={formData.category}
                     onChange={handleChange}
-                    placeholder="np. Jedzenie"
+                    placeholder="Kategoria:"
+                    list="category-options"
                 />
+                <datalist id="category-options">
+                    {categories.map((item) => (
+                        <option key={item} value={item} />
+                    ))}
+                </datalist>
             </div>
 
             <div>
-                <label>Osoba: *</label>
-                <input
+                <input style={{ fontSize: "16px", margin: "4px", padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
                     type="text"
                     name="person"
                     value={formData.person}
                     onChange={handleChange}
-                    placeholder="Imię osoby"
+                    placeholder="Osoba:"
+                    list="person-options"
                     required
                 />
+                <datalist id="person-options">
+                    {people.map((item) => (
+                        <option key={item} value={item} />
+                    ))}
+                </datalist>
             </div>
 
             <div>
-                <label>Kwota (zł): *</label>
-                <input
+                <input style={{ fontSize: "16px", margin: "4px", padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
                     type="number"
                     name="price"
                     value={formData.price}
                     onChange={handleChange}
-                    placeholder="0"
+                    placeholder="Kwota (zł):"
                     step="0.01"
                     required
                 />
