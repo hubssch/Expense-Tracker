@@ -42,7 +42,8 @@ export default function ExpenseList({ expenses }) {
                         <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Kategoria</th>
                         <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Osoba</th>
                         <th style={{ padding: '12px', textAlign: 'right', fontWeight: '600' }}>Kwota</th>
-                        <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Data</th>
+                        <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Data wydatku</th>
+                        <th style={{ padding: '12px', textAlign: 'left', fontWeight: '600' }}>Data utworzenia</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -90,6 +91,9 @@ export default function ExpenseList({ expenses }) {
                                 color: '#059669'
                             }}>
                                 {formatPrice(expense.price || 0)} zł
+                            </td>
+                            <td style={{ padding: '12px', fontSize: '0.875rem', color: '#666' }}>
+                                {expense.date ? formatDate(expense.date) : '-'}
                             </td>
                             <td style={{ padding: '12px', fontSize: '0.875rem', color: '#666' }}>
                                 {formatDate(expense.create_date)}

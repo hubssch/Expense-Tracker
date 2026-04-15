@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
+const today = new Date().toISOString().split('T')[0];
 
 export default function CreateExpenseForm({ onExpenseAdded }) {
     const [formData, setFormData] = useState({
@@ -9,7 +10,8 @@ export default function CreateExpenseForm({ onExpenseAdded }) {
         description: '',
         category: '',
         person: '',
-        price: ''
+        price: '',
+        date: today
     });
     const [categories, setCategories] = useState([]);
     const [people, setPeople] = useState([]);
@@ -58,7 +60,7 @@ export default function CreateExpenseForm({ onExpenseAdded }) {
     };
 
     async function createExpense(expenseData) {
-        const { name, description, category, person, price } = expenseData;
+        const { name, description, category, person, price, date } = expenseData;
 
         const { data, error } = await supabase
             .from('expenses')
@@ -68,7 +70,8 @@ export default function CreateExpenseForm({ onExpenseAdded }) {
                     description,
                     category,
                     person,
-                    price: parseFloat(price)
+                    price: parseFloat(price),
+                    date
                 }
             ])
             .select();
@@ -85,7 +88,7 @@ export default function CreateExpenseForm({ onExpenseAdded }) {
         e.preventDefault();
 
         // Walidacja formularza
-        if (!formData.name || !formData.price || !formData.person) {
+        if (!formData.name || !formData.price || !formData.person || !formData.date) {
             setError('Wypełnij wszystkie wymagane pola');
             return;
         }
@@ -104,7 +107,8 @@ export default function CreateExpenseForm({ onExpenseAdded }) {
                 description: '',
                 category: '',
                 person: '',
-                price: ''
+                price: '',
+                date: today
             });
             setError(null);
             // Powiadom aplikację o dodaniu nowego wydatku
@@ -176,6 +180,16 @@ export default function CreateExpenseForm({ onExpenseAdded }) {
                         <option key={item} value={item} />
                     ))}
                 </datalist>
+            </div>
+
+            <div>
+                <input style={{ fontSize: "16px", margin: "4px", padding: "8px", borderRadius: "6px", border: "1px solid #ccc" }}
+                    type="date"
+                    name="date"
+                    value={formData.date}
+                    onChange={handleChange}
+                    required
+                />
             </div>
 
             <div>

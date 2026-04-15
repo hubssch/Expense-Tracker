@@ -1,45 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 
-export default function ExpenseSummary({ expenses }) {
-    const [filters, setFilters] = useState({
-        category: '',
-        person: '',
-        dateFrom: '',
-        dateTo: ''
-    });
-
+export default function ExpenseSummary({ expenses, filteredExpenses, filters, onFilterChange, onClearFilters }) {
     const [comparisonType, setComparisonType] = useState('person'); // 'person' or 'category'
-
-    const handleFilterChange = (e) => {
-        const { name, value } = e.target;
-        setFilters(prev => ({
-            ...prev,
-            [name]: value
-        }));
-    };
-
-    // Filtrowanie wydatków
-    const filteredExpenses = useMemo(() => {
-        return expenses.filter(expense => {
-            if (filters.category && expense.category !== filters.category) return false;
-            if (filters.person && expense.person !== filters.person) return false;
-
-            if (filters.dateFrom) {
-                const expenseDate = new Date(expense.create_date);
-                const fromDate = new Date(filters.dateFrom);
-                if (expenseDate < fromDate) return false;
-            }
-
-            if (filters.dateTo) {
-                const expenseDate = new Date(expense.create_date);
-                const toDate = new Date(filters.dateTo);
-                toDate.setHours(23, 59, 59, 999);
-                if (expenseDate > toDate) return false;
-            }
-
-            return true;
-        });
-    }, [expenses, filters]);
 
     // Suma wydatków
     const totalExpenses = useMemo(() => {
@@ -67,6 +29,7 @@ export default function ExpenseSummary({ expenses }) {
     }, [filteredExpenses]);
 
     // Unikalne wartości do filtrów
+    const uniqueNames = [...new Set(expenses.map(e => e.name).filter(Boolean))];
     const uniqueCategories = [...new Set(expenses.map(e => e.category).filter(Boolean))];
     const uniquePersons = [...new Set(expenses.map(e => e.person).filter(Boolean))];
 
@@ -94,11 +57,26 @@ export default function ExpenseSummary({ expenses }) {
                 <h3 style={{ marginTop: 0 }}>Filtry</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px' }}>
                     <div>
+                        <label>Nazwa:</label>
+                        <select
+                            name="name"
+                            value={filters.name}
+                            onChange={onFilterChange}
+                            style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+                        >
+                            <option value="">Wszystkie</option>
+                            {uniqueNames.map(name => (
+                                <option key={name} value={name}>{name}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div>
                         <label>Kategoria:</label>
                         <select
                             name="category"
                             value={filters.category}
-                            onChange={handleFilterChange}
+                            onChange={onFilterChange}
                             style={{ width: '100%', padding: '8px', marginTop: '5px' }}
                         >
                             <option value="">Wszystkie</option>
@@ -113,7 +91,7 @@ export default function ExpenseSummary({ expenses }) {
                         <select
                             name="person"
                             value={filters.person}
-                            onChange={handleFilterChange}
+                            onChange={onFilterChange}
                             style={{ width: '100%', padding: '8px', marginTop: '5px' }}
                         >
                             <option value="">Wszystkie</option>
@@ -124,29 +102,29 @@ export default function ExpenseSummary({ expenses }) {
                     </div>
 
                     <div>
-                        <label>Od dnia:</label>
+                        <label>Data wydatku od:</label>
                         <input
                             type="date"
                             name="dateFrom"
                             value={filters.dateFrom}
-                            onChange={handleFilterChange}
+                            onChange={onFilterChange}
                             style={{ width: '100%', padding: '8px', marginTop: '5px' }}
                         />
                     </div>
 
                     <div>
-                        <label>Do dnia:</label>
+                        <label>Data wydatku do:</label>
                         <input
                             type="date"
                             name="dateTo"
                             value={filters.dateTo}
-                            onChange={handleFilterChange}
+                            onChange={onFilterChange}
                             style={{ width: '100%', padding: '8px', marginTop: '5px' }}
                         />
                     </div>
                 </div>
                 <button
-                    onClick={() => setFilters({ category: '', person: '', dateFrom: '', dateTo: '' })}
+                    onClick={onClearFilters}
                     style={{
                         marginTop: '10px',
                         padding: '8px 16px',
